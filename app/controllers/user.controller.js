@@ -7,7 +7,41 @@ exports.userBoard = (req, res) => {
 };
 
 exports.adminBoard = (req, res) => {
-  res.status(200).send("Admin Content.");
+  const mssql = require('mssql/msnodesqlv8'); 
+
+  var config = {
+      database:'DSRvsMREP',
+      server: 'REMOTEAPP\\REMOTEAPP',
+      user:'HPL\\out.dev2',
+      password: '',
+      driver: 'msnodesqlv8',
+      connectionTimeout: 300000,
+  requestTimeout: 300000,
+
+  // domain: "HPL",
+  options: {
+    trustedConnection: true,
+    //   enableArithAbort: true
+  },
+  pool: {
+    idleTimeoutMillis: 300000,
+      max: 100
+      }
+     
+    };
+
+ mssql.connect(config, async function (err) {
+
+          if (err) console.log(err);
+          var request = await new mssql.Request();
+          await request.query(`select * from SalesVsTarget_Main`, async  function (err,  result) {
+              if(err) console.log(err.message);
+              await res.status(200).send(result);
+
+          });
+
+      });
+
 };
 
 exports.moderatorBoard = (req, res) => {
